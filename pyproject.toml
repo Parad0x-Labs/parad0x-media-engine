@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "parad0x-media-engine"
+version = "0.1.0b0"
+description = "Validation-backed public media optimization for images and video."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {file = "LICENSE"}
+authors = [
+  {name = "Parad0x Labs"},
+]
+keywords = [
+  "media",
+  "compression",
+  "optimization",
+  "avif",
+  "hevc",
+  "video",
+  "image",
+]
+dependencies = [
+  "numpy>=1.26,<3",
+  "Pillow>=10,<12",
+  "psutil>=5.9,<7",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8,<9",
+]
+
+[project.scripts]
+parad0x-media-engine = "parad0x_media_engine:main"
+parad0x-media-benchmark = "media_benchmark:main"
+parad0x-adaptive-image = "adaptive_image_engine:main"
+parad0x-zone-video = "zone_video_engine:main"
+
+[tool.setuptools]
+py-modules = [
+  "parad0x_media_engine",
+  "media_benchmark",
+  "adaptive_image_engine",
+  "avif_safe_engine",
+  "avif_extreme_engine",
+  "fast_av1_video_engine",
+  "zone_video_engine",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

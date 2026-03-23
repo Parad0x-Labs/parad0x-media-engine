@@ -1,4 +1,4 @@
-# Parad0x Media Engine ![License: BUSL-1.1](https://img.shields.io/badge/License-BUSL--1.1-blue.svg) ![Status: Validation-backed](https://img.shields.io/badge/Status-Validation--Backed-0b1020.svg) ![Outputs: Public Formats](https://img.shields.io/badge/Outputs-AVIF%20%7C%20WebP%20%7C%20MP4-black.svg)
+# Parad0x Media Engine [![License: BUSL-1.1](https://img.shields.io/badge/License-BUSL--1.1-blue.svg)](./LICENSE) [![Status: Validation-backed](https://img.shields.io/badge/Status-Validation--Backed-0b1020.svg)](./docs/VALIDATION.md) [![Outputs: Public Formats](https://img.shields.io/badge/Outputs-AVIF%20%7C%20WebP%20%7C%20MP4-black.svg)](./docs/COMPATIBILITY.md)
 
 **Public-media optimization for real images and videos. Smaller files, preserved resolution, measured quality.**
 

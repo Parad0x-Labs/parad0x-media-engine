@@ -45,6 +45,16 @@ docs:
 - **Safe fallback behavior**: ugly phone footage can fall back to passthrough instead of pretending compression succeeded.
 - **Agent-friendly JSON**: every run returns structured output with size, speed, probe metadata, and preservation flags.
 
+## Mobile Lineage
+
+Earlier generations of these engines also power the **Parad0x Compress** mobile apps.
+
+- **Android / Google Play**: live listing verified for [Parad0x Compress](https://play.google.com/store/apps/details?id=com.seekercompress)
+- **Apple App Store**: the official Parad0x Labs site currently lists this as `Apple Store Soon`; no public App Store listing is linked here until it is directly verifiable
+- **Solana Seeker / Solana dApp Store**: the official Parad0x Labs site states Parad0x Compress is also on the Solana dApp Store, but a direct public listing URL was not exposed in the site at the time of this README update
+
+If you need a strict public-proof stance, treat the Android listing as verified live and the Apple / Solana listings as official-but-not-directly-linked status claims until direct store URLs are available.
+
 ## Quick Start
 
 **macOS / Linux**

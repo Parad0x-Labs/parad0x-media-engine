@@ -89,7 +89,7 @@ def test_parse_output_path_reads_zone_winner_json() -> None:
     """
     parsed = MODULE.parse_output_path(stdout, "")
     assert parsed is not None
-    assert str(parsed) == "/tmp/zone_winner.mp4"
+    assert parsed.as_posix() == "/tmp/zone_winner.mp4"
 
 
 def test_parse_output_path_reads_output_json_field() -> None:
@@ -101,7 +101,7 @@ def test_parse_output_path_reads_output_json_field() -> None:
     """
     parsed = MODULE.parse_output_path(stdout, "")
     assert parsed is not None
-    assert str(parsed) == "/tmp/adaptive_image_winner.webp"
+    assert parsed.as_posix() == "/tmp/adaptive_image_winner.webp"
 
 
 def test_resolve_engine_specs_filters_requested_engine() -> None:

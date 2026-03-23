@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.9", "3.11"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install package
+        run: python -m pip install --upgrade pip setuptools wheel && python -m pip install -e ".[dev]"
+
+      - name: Public surface check
+        run: python scripts/public_surface_check.py
+
+      - name: CLI help smoke
+        run: |
+          python parad0x_media_engine.py --help
+          python media_benchmark.py --help
+
+      - name: Unit tests
+        run: pytest

@@ -1,0 +1,35 @@
+{
+  "status": "OK",
+  "input": "/path/to/input.mp4",
+  "output": "/path/to/output/input_parad0x_media_balanced.mp4",
+  "media_kind": "video",
+  "mode": "balanced",
+  "engine": "fast_hevc_balanced",
+  "public_format": "mp4",
+  "seconds": 2.832,
+  "original_bytes": 3173826,
+  "compressed_bytes": 2715458,
+  "ratio_x": 1.169,
+  "resolution_preserved": true,
+  "duration_preserved": true,
+  "bit_depth_preserved": true,
+  "source_probe": {
+    "codec_name": "h264",
+    "width": 720,
+    "height": 1278,
+    "pix_fmt": "yuv420p",
+    "duration": 6.367
+  },
+  "output_probe": {
+    "codec_name": "hevc",
+    "width": 720,
+    "height": 1278,
+    "pix_fmt": "yuv420p",
+    "duration": 6.367
+  },
+  "engine_details": {
+    "mode": "balanced",
+    "engine_mode": "balanced",
+    "target_video_kbps": 3100
+  }
+}

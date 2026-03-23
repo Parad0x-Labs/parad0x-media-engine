@@ -1,11 +1,14 @@
 # Commercial Licensing
 
-Parad0x Media Engine is **not** available for third-party production use under the public BUSL-1.1 grant in this repository.
+Parad0x Media Engine is available for free use in personal/private, nonprofit, academic, and qualifying open-source contexts under the public BUSL-1.1 grant in this repository.
+
+Commercial / for-profit production use requires a separate commercial license from Parad0x Labs.
 
 ## What requires a commercial license
 
 A separate commercial license from Parad0x Labs is required for any third-party production use, including:
 
+- use by or for the benefit of a for-profit entity
 - internal company deployment
 - customer-facing or employee-facing production systems
 - SaaS, hosted, API, or managed-service offerings
@@ -19,7 +22,10 @@ A separate commercial license from Parad0x Labs is required for any third-party 
 - local development
 - source review
 - modification and experimentation outside production
-- official Parad0x Labs and official NULLA first-party production use, as described in [LICENSE](./LICENSE)
+- personal/private production use
+- nonprofit production use in support of a nonprofit mission
+- academic, educational, and public research production use
+- qualifying open-source project operation, as described in [LICENSE](./LICENSE)
 
 ## No implied codec clearance
 

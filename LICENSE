@@ -12,9 +12,13 @@ Licensed Work: Parad0x Media Engine (all versions and source code distributed in
 Copyright (c) 2026 Parad0x Labs
 
 Additional Use Grant:
-Production use is permitted solely as part of official Parad0x Labs and official NULLA first-party distributions and services.
+Free Use for Personal, Nonprofit, Academic, and Open-Source Use.
 
-This Additional Use Grant does not authorize any third-party production use, internal company deployment, paid client work, hosted/API offerings, embedding, bundling, or monetized products or services outside those official first-party distributions and services. All third-party production use requires a separate commercial license from Parad0x Labs.
+You may make production and non-production use of the Licensed Work without a separate commercial license solely for (I) personal/private non-commercial use; (II) nonprofit organization use in support of its mission where the use is not primarily for the benefit of a for-profit entity; (III) academic, educational, or research use by schools, universities, and public research institutions; and (IV) open-source project development and operation where access to the Licensed Work itself, or Parad0x Media Engine-powered functionality, is not sold, licensed for a fee, or offered as part of a commercial product or service.
+
+This Additional Use Grant does not apply to any Commercial Use, including use by or for the benefit of a for-profit entity, internal business operations, hosted/SaaS/API offerings, embedding or bundling in a commercial product or service, monetized open-source wrappers or managed offerings that materially rely on the Licensed Work, or services delivered for a paying client. Commercial Use requires a separate commercial license from the Licensor.
+
+For clarity, this Additional Use Grant does not reduce the non-production rights granted by this License.
 
 Change Date: 2030-03-23
 
@@ -52,8 +56,10 @@ In consideration of the right to use this License's text and the "Business Sourc
 
 2. To either:
 
-   a. Specify an Additional Use Grant that permits use of the software that does not impose a limitation, right, or condition that is more restrictive than the covenants made in this License; or
+   a. specify an additional grant of rights to use that does not impose any additional restriction on the rights granted in this License, as the Additional Use Grant; or
 
-   b. Not specify any Additional Use Grant.
+   b. insert the text "None".
 
-3. To not modify the text of this License, except for the parameters identified above.
+3. To specify a Change Date.
+
+4. Not to modify this License in any other way.

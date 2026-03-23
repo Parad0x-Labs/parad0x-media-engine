@@ -156,9 +156,9 @@ This makes the engine easy to wrap from agents, local apps, and CI validation jo
 
 Parad0x Media Engine is licensed under the **Business Source License 1.1 (BUSL-1.1)**.
 
-- **Official first-party production use**: permitted for official Parad0x Labs and official NULLA first-party distributions and services under the Additional Use Grant in [LICENSE](./LICENSE)
-- **Third-party production use**: requires a commercial license from Parad0x Labs
-- **Non-production use**: governed by BUSL-1.1
+- **Free use**: personal/private, nonprofit, academic/research, and qualifying open-source use, including production in those contexts
+- **Commercial / for-profit use**: requires a separate license from Parad0x Labs
+- **Decoder / public outputs**: no hostage format; outputs remain standard public media files
 - **Change Date**: `2030-03-23`
 - **Change License**: `GPL-2.0-or-later`
 

@@ -26,3 +26,4 @@ python media_benchmark.py --help
 - no legacy app folders, uploads, logs, reports, or local toolchain blobs in the clean repo
 - benchmark and validation docs included without leaking private workspace paths
 - latest local smoke artifact: `reports/parad0x_media_validation/clean_repo_smoke_20260323/clean_repo_smoke_20260323.md`
+- contribution docs, templates, codeowners, examples, and changelog are present

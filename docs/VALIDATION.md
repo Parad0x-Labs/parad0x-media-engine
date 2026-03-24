@@ -8,8 +8,27 @@ This repository is validated as a product-facing media engine, not just a pile o
 - public-surface scrub for internal codenames and local-path leaks
 - CLI help smoke for the main engine and benchmark entrypoints
 - benchmark/report generation support through `media_benchmark.py`
+- published competitive matrix in [docs/COMPETITIVE_RESULTS.md](./COMPETITIVE_RESULTS.md)
 
 ## Latest reference snapshot
+
+## Competitive matrix
+
+The strongest current public proof page is [docs/COMPETITIVE_RESULTS.md](./COMPETITIVE_RESULTS.md).
+
+That document compares Parad0x Media Engine against strong plain-codec baselines across:
+
+- short social video
+- clean reference video
+- moderate phone video
+- hard long phone video
+- real phone-photo fixtures
+
+Headline read:
+
+- Parad0x wins `3/4` strict video fixtures in the current published matrix
+- Parad0x wins `1/4` image fixtures outright, ties one dense AVIF-style case, and loses two hard-photo cases to JPEG repacks
+- the biggest savings numbers are not automatically the real winners once quality gates are enforced
 
 ## Clean repo smoke revalidation
 

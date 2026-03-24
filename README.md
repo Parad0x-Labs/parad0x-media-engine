@@ -34,6 +34,7 @@ licensor: Parad0x Labs
 docs:
   install: ./docs/INSTALL.md
   validation: ./docs/VALIDATION.md
+  competitive: ./docs/COMPETITIVE_RESULTS.md
   release_audit: ./docs/RELEASE_AUDIT.md
 ```
 
@@ -123,6 +124,8 @@ parad0x-media-benchmark --root . --out-dir ./reports/parad0x_media_validation
 
 Current reference validation notes are in [docs/VALIDATION.md](./docs/VALIDATION.md).
 
+The published competitive matrix is in [docs/COMPETITIVE_RESULTS.md](./docs/COMPETITIVE_RESULTS.md).
+
 Headline local results from the March 23, 2026 validation pass:
 
 - `video-1.mp4` `super_max_savings`: `67.22%` smaller, `SSIM 0.981205`, full resolution and duration preserved
@@ -131,6 +134,17 @@ Headline local results from the March 23, 2026 validation pass:
 - 8K image `balanced`: `59.20x` compression, `SSIM 0.9864`, full resolution preserved
 
 Do not publish fresh numeric claims without regenerating the validation artifacts after engine changes.
+
+## Competitive Snapshot
+
+Current published competitive read:
+
+- Parad0x wins `3/4` strict video fixtures in the public comparison matrix
+- Parad0x `balanced` is the strict winner on `Jellyfish` and the moderate phone clip
+- Parad0x `max_savings` is the honest strict winner on the hard 60-second phone clip because the high-savings baselines destroy quality
+- Parad0x does **not** win every content class: `x264 medium CRF23` won the short social clip, and `JPEG q84` won two hard phone-photo cases
+
+That is a serious result. It is not universal dominance.
 
 If your FFmpeg toolchain is not on `PATH`, you can point the engine at explicit binaries with:
 
@@ -158,6 +172,7 @@ This makes the engine easy to wrap from agents, local apps, and CI validation jo
 
 - [docs/INSTALL.md](./docs/INSTALL.md)
 - [docs/VALIDATION.md](./docs/VALIDATION.md)
+- [docs/COMPETITIVE_RESULTS.md](./docs/COMPETITIVE_RESULTS.md)
 - [docs/RELEASE_AUDIT.md](./docs/RELEASE_AUDIT.md)
 - [SECURITY.md](./SECURITY.md)
 - [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)

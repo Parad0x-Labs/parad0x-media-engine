@@ -24,11 +24,11 @@ That document compares Parad0x Media Engine against strong plain-codec baselines
 - hard long phone video
 - real phone-photo fixtures
 
-Headline read:
+Summary:
 
-- Parad0x wins `3/4` strict video fixtures in the current published matrix
-- Parad0x wins `1/4` image fixtures outright, ties one dense AVIF-style case, and loses two hard-photo cases to JPEG repacks
-- the biggest savings numbers are not automatically the real winners once quality gates are enforced
+- Parad0x leads `3/4` strict video fixtures in the current published matrix
+- Parad0x leads `1/4` image fixtures outright, ties one dense AVIF-style case, and trails two hard-photo cases against JPEG repacks
+- the largest size reduction is not automatically the best qualified result once quality gates are enforced
 
 ## Clean repo smoke revalidation
 
@@ -73,4 +73,4 @@ Regenerate the benchmark report locally with:
 parad0x-media-benchmark --root . --out-dir ./reports/parad0x_media_validation
 ```
 
-Do not publish fresh claims without regenerating the artifacts after engine changes.
+Regenerate published figures after engine changes.

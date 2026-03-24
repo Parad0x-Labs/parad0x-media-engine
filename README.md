@@ -43,7 +43,7 @@ docs:
 - **Public outputs only**: no proprietary container tricks, no hostage format, no decoder dependency for normal playback.
 - **Measured quality gates**: image SSIM and video VMAF / sampled SSIM drive decisions instead of blind bitrate cuts.
 - **Mode-based product behavior**: `max_quality`, `balanced`, `max_savings`, and `super_max_savings` are explicit, testable policies.
-- **Safe fallback behavior**: ugly phone footage can fall back to passthrough instead of pretending compression succeeded.
+- **Safe fallback behavior**: difficult phone footage can fall back to passthrough when a quality-safe reduction is not available.
 - **Agent-friendly JSON**: every run returns structured output with size, speed, probe metadata, and preservation flags.
 
 ## Mobile Lineage
@@ -133,18 +133,18 @@ Headline local results from the March 23, 2026 validation pass:
 - 4K image `balanced`: `29.44x` compression, `SSIM 0.9806`, full resolution preserved
 - 8K image `balanced`: `59.20x` compression, `SSIM 0.9864`, full resolution preserved
 
-Do not publish fresh numeric claims without regenerating the validation artifacts after engine changes.
+Published performance figures should be regenerated after engine changes.
 
 ## Competitive Snapshot
 
 Current published competitive read:
 
 - Parad0x wins `3/4` strict video fixtures in the public comparison matrix
-- Parad0x `balanced` is the strict winner on `Jellyfish` and the moderate phone clip
-- Parad0x `max_savings` is the honest strict winner on the hard 60-second phone clip because the high-savings baselines destroy quality
+- Parad0x `balanced` ranks first on `Jellyfish` and the moderate phone clip under the published quality bar
+- Parad0x `max_savings` ranks first on the hard 60-second phone clip because it preserves quality where more aggressive baselines do not
 - Parad0x does **not** win every content class: `x264 medium CRF23` won the short social clip, and `JPEG q84` won two hard phone-photo cases
 
-That is a serious result. It is not universal dominance.
+The current matrix supports a strong video-first product position, with mixed outcomes across harder image edge cases.
 
 If your FFmpeg toolchain is not on `PATH`, you can point the engine at explicit binaries with:
 

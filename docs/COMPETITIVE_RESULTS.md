@@ -31,7 +31,7 @@ Image baselines:
 - resolution preserved
 - duration preserved for video
 
-This matters because the biggest file reduction is often not the real winner.
+This matters because the largest file reduction is often not the best quality-qualified result.
 
 ## Video Winners
 
@@ -40,7 +40,7 @@ This matters because the biggest file reduction is often not the real winner.
 | `social_short_video1` | `x264 medium CRF23` | `45.57%` | `VMAF 98.1675` | `0.75s` | `5.48` | Parad0x `super_max_savings` hit `67.28%`, but failed at `VMAF 95.4037` |
 | `reference_jellyfish` | `Parad0x balanced` | `76.88%` | `VMAF 96.1694` | `12.29s` | `93.57` | Best quality-passing result in the clean reference lane |
 | `phone_moderate_23s` | `Parad0x balanced` | `31.23%` | `sampled_ssim 0.9823` | `44.11s` | `275.15` | Other encodes saved more bytes, but all missed the quality bar |
-| `phone_hard_rotated_60s` | `Parad0x max_savings` | `1.08%` | `sampled_ssim 1.0000` | `9.76s` | `37.30` | The “honest fallback” case; competitors got bigger savings by destroying quality |
+| `phone_hard_rotated_60s` | `Parad0x max_savings` | `1.08%` | `sampled_ssim 1.0000` | `9.76s` | `37.30` | Quality-preserving result; higher-compression baselines missed the threshold |
 
 ## Video Failure Cases That Matter
 
@@ -62,10 +62,10 @@ This matters because the biggest file reduction is often not the real winner.
 
 ## What This Actually Proves
 
-- Parad0x is **strong on strict video**, especially when the test penalizes fake savings.
+- Parad0x is **strong on strict video**, especially when the matrix penalizes high-savings outputs that miss the quality bar.
 - Parad0x is **not universally best on every short easy clip**. On `video-1.mp4`, `x264 medium CRF23` beat the strict Parad0x winner.
 - Parad0x is **not universally best on phone photos**. Two hard/large phone-photo cases were won by `JPEG q84`.
-- The “highest savings” line is often a trap. Several candidates posted much larger size cuts and still lost because the quality collapse was obvious in the numbers.
+- The highest savings line is not always the best result. Several candidates posted much larger size cuts and still lost once quality preservation was enforced.
 
 ## Biggest Strategic Read
 
@@ -73,12 +73,12 @@ Parad0x’s actual edge is not “always smallest file.”
 
 Parad0x’s edge is:
 
-- quality-gated behavior on ugly real-world video
-- refusal to fake wins on hard UGC
+- quality-gated behavior on difficult real-world video
+- stable handling of hard UGC where more aggressive baselines miss threshold
 - very strong clean-reference video compression
 - strong AVIF behavior on cleaner phone-photo cases
 
-That is a serious product story. It is not the same thing as universal dominance.
+The current matrix supports a strong video-first product position, with selective image advantages on the right content classes.
 
 ## Operational Caveats
 
@@ -90,14 +90,8 @@ That is a serious product story. It is not the same thing as universal dominance
   - `618.40s` wall time
   - `3390.13 CU`
 
-That is not a shipping default. It is a warning label.
+That is not a recommended default. It is an experimental edge result.
 
 ## Bottom Line
 
-Use this page to say:
-
-`Parad0x Media Engine wins important strict video lanes, stays honest on ugly footage, and can produce extreme savings on the right media without resorting to fake proprietary formats.`
-
-Do not use this page to say:
-
-`Parad0x beats every encoder on every file.`
+In the current published matrix, Parad0x Media Engine leads several strict video scenarios, remains competitive on difficult user-generated footage, and posts strong AVIF results on selected phone-photo classes. Results vary by content type, so performance claims should follow the fixture-specific tables above.

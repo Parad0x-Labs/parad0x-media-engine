@@ -27,8 +27,9 @@ That document compares Parad0x Media Engine against strong plain-codec baselines
 Summary:
 
 - Parad0x leads `3/4` strict video fixtures in the current published matrix
-- Parad0x leads `1/4` image fixtures outright, ties one dense AVIF-style case, and trails two hard-photo cases against JPEG repacks
+- Parad0x leads `1/4` image fixtures outright, reaches published parity on one dense AVIF-style case, and trails two hard-photo cases against JPEG repacks
 - the largest size reduction is not automatically the best qualified result once quality gates are enforced
+- the published matrix uses general-purpose settings rather than fixture-specific tuning
 
 ## Clean repo smoke revalidation
 

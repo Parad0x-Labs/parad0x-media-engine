@@ -56,7 +56,7 @@ This matters because the largest file reduction is often not the best quality-qu
 | Fixture | Strict winner | Savings | Quality | Time | CU | Read |
 | --- | --- | ---: | ---: | ---: | ---: | --- |
 | `photo_cleaner_104827` | `Parad0x balanced` | `87.53%` | `SSIM 0.9820` | `2.62s` | `14.11` | Better strict result than direct AVIF and WebP |
-| `photo_dense_112034` | `direct_avif_crf28` | `73.21%` | `SSIM 0.9943` | `1.57s` | `10.39` | Parad0x `max_savings` was effectively tied on size, but slower |
+| `photo_dense_112034` | `direct_avif_crf28` | `73.21%` | `SSIM 0.9943` | `1.57s` | `10.39` | Parad0x `max_savings` matched the published savings and SSIM figures, with the direct baseline retaining the runtime edge |
 | `photo_hard_142337` | `jpeg_q84` | `66.48%` | `SSIM 0.9891` | `0.13s` | `0.00` | Parad0x `balanced` held higher quality, but not enough savings to win strict size-first ranking |
 | `photo_large_203353` | `jpeg_q84` | `83.40%` | `SSIM 0.9925` | `0.15s` | `0.00` | Parad0x `balanced` was close at `81.62%` / `SSIM 0.9935` |
 
@@ -64,6 +64,7 @@ This matters because the largest file reduction is often not the best quality-qu
 
 - Parad0x is **strong on strict video**, especially when the matrix penalizes high-savings outputs that miss the quality bar.
 - Parad0x is **not universally best on every short easy clip**. On `video-1.mp4`, `x264 medium CRF23` beat the strict Parad0x winner.
+- Parad0x reaches **published parity on the dense AVIF-style image case**, matching the leading savings and SSIM figures while trailing on runtime.
 - Parad0x is **not universally best on phone photos**. Two hard/large phone-photo cases were won by `JPEG q84`.
 - The highest savings line is not always the best result. Several candidates posted much larger size cuts and still lost once quality preservation was enforced.
 
@@ -80,6 +81,18 @@ Parad0x’s edge is:
 
 The current matrix supports a strong video-first product position, with selective image advantages on the right content classes.
 
+## Tuning Headroom
+
+The published matrix uses general-purpose public settings, not fixture-specific hand tuning.
+
+That matters because repeated content families tend to reward targeted profiles:
+
+- short social portrait clips have a different frontier than clean reference material
+- moderate phone footage and hard long UGC do not share the same safe compression envelope
+- dense photos, cleaner photos, and large phone JPEGs do not peak at the same AVIF / JPEG settings
+
+In stable production cohorts, codec settings can be tuned per content family to move the size-quality frontier further. That work still has to be validated per cohort; it should not be claimed as a blanket result from this matrix alone.
+
 ## Operational Caveats
 
 - `Parad0x max_quality` failed on `photo_hard_142337` because the upstream `libaom-av1` still-image path failed on that source during the run.
@@ -94,4 +107,4 @@ That is not a recommended default. It is an experimental edge result.
 
 ## Bottom Line
 
-In the current published matrix, Parad0x Media Engine leads several strict video scenarios, remains competitive on difficult user-generated footage, and posts strong AVIF results on selected phone-photo classes. Results vary by content type, so performance claims should follow the fixture-specific tables above.
+In the current published matrix, Parad0x Media Engine leads several strict video scenarios, remains competitive on difficult user-generated footage, and posts strong AVIF results on selected phone-photo classes. The current figures are based on general-purpose public settings; repeated media cohorts can be tuned further, but those gains must be validated on the target class before they are claimed.

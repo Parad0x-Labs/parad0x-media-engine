@@ -142,9 +142,10 @@ Current published competitive read:
 - Parad0x wins `3/4` strict video fixtures in the public comparison matrix
 - Parad0x `balanced` ranks first on `Jellyfish` and the moderate phone clip under the published quality bar
 - Parad0x `max_savings` ranks first on the hard 60-second phone clip because it preserves quality where more aggressive baselines do not
+- Parad0x reaches published parity on the dense AVIF-style image case, matching the leading savings and SSIM figures in the current public table
 - Parad0x does **not** win every content class: `x264 medium CRF23` won the short social clip, and `JPEG q84` won two hard phone-photo cases
 
-The current matrix supports a strong video-first product position, with mixed outcomes across harder image edge cases.
+The current matrix supports a strong video-first product position today, with additional headroom available through per-content tuning on repeated media cohorts.
 
 If your FFmpeg toolchain is not on `PATH`, you can point the engine at explicit binaries with:
 

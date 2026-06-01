@@ -195,3 +195,7 @@ Parad0x Media Engine is licensed under the **Business Source License 1.1 (BUSL-1
 ## Third-Party Codec Note
 
 This repository ships source code only. It does **not** bundle FFmpeg or codec binaries. Your legal obligations depend on the FFmpeg / codec build you choose to install and distribute. See [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md) before shipping anything commercially.
+
+<p align="center">
+  <img src="./docs/assets/github-footer-parad0xlabs.png" alt="NULL - Parad0xLabs open source systems" width="100%" />
+</p>

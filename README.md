@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./docs/assets/github-header-parad0x-media-engine.png" alt="Parad0x Media Engine - Validated media optimization for public files" width="100%" />
+</p>
+
 # Parad0x Media Engine [![CI](https://github.com/Parad0x-Labs/parad0x-media-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/Parad0x-Labs/parad0x-media-engine/actions/workflows/ci.yml) [![License: BUSL-1.1](https://img.shields.io/badge/License-BUSL--1.1-blue.svg)](./LICENSE) [![Status: Validation-backed](https://img.shields.io/badge/Status-Validation--Backed-0b1020.svg)](./docs/VALIDATION.md) [![Outputs: Public Formats](https://img.shields.io/badge/Outputs-AVIF%20%7C%20WebP%20%7C%20MP4-black.svg)](./docs/COMPATIBILITY.md)
 
 **Public-media optimization for real images and videos. Smaller files, preserved resolution, measured quality.**
@@ -191,3 +195,7 @@ Parad0x Media Engine is licensed under the **Business Source License 1.1 (BUSL-1
 ## Third-Party Codec Note
 
 This repository ships source code only. It does **not** bundle FFmpeg or codec binaries. Your legal obligations depend on the FFmpeg / codec build you choose to install and distribute. See [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md) before shipping anything commercially.
+
+<p align="center">
+  <img src="./docs/assets/github-footer-parad0xlabs.png" alt="NULL - Parad0xLabs open source systems" width="100%" />
+</p>

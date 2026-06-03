@@ -72,6 +72,34 @@ VIDEO_SAMPLE_LONG_EDGE = 720
 EXIF_ORIENTATION_TAG = 0x0112
 SUPER_MAX_SSIM_TARGET = 0.980
 
+
+def _env_timeout(name: str, default: int) -> int:
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    try:
+        value = int(raw.strip())
+    except (TypeError, ValueError):
+        return default
+    return value if value > 0 else default
+
+
+# Subprocess timeouts (seconds), env-overridable. Encodes can be long (super_max
+# frontier search), so the default ceiling is generous but bounded — agents and
+# background workers must never block forever on a hung ffmpeg/ffprobe.
+FFPROBE_TIMEOUT_SEC = _env_timeout("PARADOX_MEDIA_ENGINE_PROBE_TIMEOUT_SEC", 120)
+ENCODE_TIMEOUT_SEC = _env_timeout("PARADOX_MEDIA_ENGINE_TIMEOUT_SEC", 1800)
+
+
+class MediaEngineError(Exception):
+    """Engine failure carrying an agent-parseable ``error_kind`` and CLI ``exit_code``."""
+
+    def __init__(self, message: str, *, error_kind: str = "error", exit_code: int = 1) -> None:
+        super().__init__(message)
+        self.error_kind = error_kind
+        self.exit_code = exit_code
+
+
 if Image is not None:
     try:
         RESAMPLE_LANCZOS = Image.Resampling.LANCZOS
@@ -253,7 +281,7 @@ def ffprobe_stream(path: Path, env: Dict[str, str]) -> Dict[str, object]:
         "json",
         str(path),
     ]
-    out = subprocess.check_output(cmd, env=env).decode("utf-8", errors="replace")
+    out = subprocess.check_output(cmd, env=env, timeout=FFPROBE_TIMEOUT_SEC).decode("utf-8", errors="replace")
     data = json.loads(out)
     streams = data.get("streams", [])
     video_stream = next((stream for stream in streams if stream.get("codec_type") == "video"), {})
@@ -536,6 +564,7 @@ def ffmpeg_has_filter(env: Dict[str, str], filter_name: str) -> bool:
         capture_output=True,
         text=True,
         check=False,
+        timeout=FFPROBE_TIMEOUT_SEC,
     )
     present = filter_name in ((result.stdout or "") + "\n" + (result.stderr or ""))
     FILTER_CACHE[cache_key] = present
@@ -576,7 +605,7 @@ def extract_video_metric_frames(path: Path, env: Dict[str, str]) -> List["Image.
             ),
             frame_pattern,
         ]
-        result = subprocess.run(cmd, env=env, capture_output=True, text=True, check=False)
+        result = subprocess.run(cmd, env=env, capture_output=True, text=True, check=False, timeout=ENCODE_TIMEOUT_SEC)
         if result.returncode != 0:
             return []
         frame_paths = sorted(Path(tmp_dir).glob("frame_*.png"))
@@ -635,7 +664,7 @@ def measure_video_full_ssim(reference_path: Path, candidate_path: Path, env: Dic
         "null",
         "-",
     ]
-    result = subprocess.run(cmd, env=env, capture_output=True, text=True, check=False)
+    result = subprocess.run(cmd, env=env, capture_output=True, text=True, check=False, timeout=ENCODE_TIMEOUT_SEC)
     output = (result.stdout or "") + "\n" + (result.stderr or "")
     return "ssim", parse_metric_from_ffmpeg_output(output, "ssim")
 
@@ -663,7 +692,7 @@ def measure_video_quality(reference_path: Path, candidate_path: Path, env: Dict[
             "null",
             "-",
         ]
-        result = subprocess.run(cmd, env=env, capture_output=True, text=True, check=False)
+        result = subprocess.run(cmd, env=env, capture_output=True, text=True, check=False, timeout=ENCODE_TIMEOUT_SEC)
         output = (result.stdout or "") + "\n" + (result.stderr or "")
         return "vmaf", parse_metric_from_ffmpeg_output(output, "vmaf")
     if ffmpeg_has_filter(env, "ssim"):
@@ -693,7 +722,7 @@ def decode_image_for_metrics(path: Path, env: Dict[str, str]) -> "Image.Image":
                 str(path),
                 str(png_path),
             ]
-            subprocess.run(cmd, env=env, capture_output=True, text=True, check=True)
+            subprocess.run(cmd, env=env, capture_output=True, text=True, check=True, timeout=ENCODE_TIMEOUT_SEC)
             with Image.open(png_path) as image:
                 if ImageOps is not None:
                     image = ImageOps.exif_transpose(image)
@@ -860,7 +889,7 @@ def measure_image_quality(reference_path: Path, candidate_path: Path, env: Dict[
         "null",
         "-",
     ]
-    result = subprocess.run(cmd, env=env, capture_output=True, text=True, check=False)
+    result = subprocess.run(cmd, env=env, capture_output=True, text=True, check=False, timeout=ENCODE_TIMEOUT_SEC)
     output = (result.stdout or "") + "\n" + (result.stderr or "")
     return "ssim", parse_metric_from_ffmpeg_output(output, "ssim")
 
@@ -2245,6 +2274,7 @@ def run_job(job: EngineJob, cwd: Path, env: Dict[str, str]) -> Tuple[Path, str, 
         capture_output=True,
         text=True,
         check=True,
+        timeout=ENCODE_TIMEOUT_SEC,
     )
     output_path = parse_output_path(result.stdout, result.stderr, cwd)
     if not output_path and job.command:
@@ -2271,37 +2301,35 @@ def build_final_path(source: Path, out_dir: Path, mode: str, output_ext: str) ->
     return out_dir / f"{source.stem}_parad0x_media_{normalize_mode(mode)}{output_ext}"
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description="PARAD0X MEDIA ENGINE - clean public image/video compression")
-    parser.add_argument("input", help="Input image or video")
-    parser.add_argument("-o", "--out", default="parad0x_media_out", help="Output directory")
-    parser.add_argument("--kind", choices=["auto", "image", "video"], default="auto")
-    parser.add_argument("--mode", choices=PRODUCT_MODE_CHOICES, default="balanced")
-    parser.add_argument("--image-format", choices=["auto", "avif", "webp"], default="auto")
-    parser.add_argument("--video-target-mb", type=float, default=None, help="Optional explicit video target size in MB")
-    parser.add_argument(
-        "--video-engine",
-        choices=["auto", "fast-hevc", "zone"],
-        default="fast-hevc",
-        help="Video engine policy. fast-hevc is the default product lane; auto runs the slower Parad0x Labs candidate fight.",
-    )
-    parser.add_argument(
-        "--hevc-bitdepth",
-        choices=["auto", "8", "10"],
-        default="auto",
-        help="Fast HEVC output bit depth. auto preserves 10-bit only when the source is 10-bit.",
-    )
-    parser.add_argument("--drop-audio", action="store_true", help="Drop video audio for more aggressive size reduction")
-    args = parser.parse_args()
+__all__ = ["optimize", "main", "MediaEngineError"]
 
-    source = Path(args.input).expanduser().resolve()
+
+def optimize(
+    input: str,
+    *,
+    out: str = "parad0x_media_out",
+    kind: str = "auto",
+    mode: str = "balanced",
+    image_format: str = "auto",
+    video_target_mb: Optional[float] = None,
+    video_engine: str = "fast-hevc",
+    hevc_bitdepth: str = "auto",
+    drop_audio: bool = False,
+) -> Dict[str, object]:
+    """Optimize one media file and return the run report as a dict.
+
+    Importable entry point behind the CLI. On success returns the same
+    JSON-serializable report the CLI prints (``status == "OK"``). On failure it
+    raises :class:`MediaEngineError` (carrying an agent-parseable ``error_kind``)
+    or a standard subprocess error; the CLI maps either to a structured ``ERR``.
+    """
+    source = Path(input).expanduser().resolve()
     if not source.exists():
-        print(json.dumps({"status": "ERR", "error": f"Input not found: {source}"}))
-        return 2
+        raise MediaEngineError(f"Input not found: {source}", error_kind="input_not_found", exit_code=2)
 
-    media_kind = detect_media_kind(source) if args.kind == "auto" else args.kind
-    selected_mode = normalize_mode(args.mode)
-    out_dir = Path(args.out).expanduser().resolve()
+    media_kind = detect_media_kind(source) if kind == "auto" else kind
+    selected_mode = normalize_mode(mode)
+    out_dir = Path(out).expanduser().resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
     env = prepare_env()
     cwd = repo_root()
@@ -2313,12 +2341,12 @@ def main() -> int:
     engine_details: Dict[str, object] = {}
     with tempfile.TemporaryDirectory(prefix="parad0x_media_engine_", dir=str(out_dir)) as tmp_dir:
         temp_dir = Path(tmp_dir)
-        if media_kind == "image" and args.image_format in {"auto", "avif"} and selected_mode in {"balanced", "max_savings"}:
+        if media_kind == "image" and image_format in {"auto", "avif"} and selected_mode in {"balanced", "max_savings"}:
             temp_output, engine_details = run_image_auto_pipeline(
                 source=source,
                 output_dir=temp_dir,
                 mode=selected_mode,
-                image_format=args.image_format,
+                image_format=image_format,
                 source_probe=source_probe,
                 cwd=cwd,
                 env=env,
@@ -2329,31 +2357,31 @@ def main() -> int:
             temp_output, engine_details = run_video_super_max_pipeline(
                 source=source,
                 output_dir=temp_dir,
-                keep_audio=not args.drop_audio,
+                keep_audio=not drop_audio,
                 source_probe=source_probe,
-                hevc_bitdepth=args.hevc_bitdepth,
+                hevc_bitdepth=hevc_bitdepth,
                 video_profile=video_profile,
                 cwd=cwd,
                 env=env,
             )
             engine_name = "super_max_savings_labs"
             final_output = finalize_output(temp_output, build_final_path(source, out_dir, selected_mode, ".mp4"))
-        elif media_kind == "video" and args.video_engine == "auto":
+        elif media_kind == "video" and video_engine == "auto":
             temp_output, engine_details = run_video_auto_pipeline(
                 source=source,
                 output_dir=temp_dir,
                 mode=selected_mode,
-                target_mb=args.video_target_mb,
-                keep_audio=not args.drop_audio,
+                target_mb=video_target_mb,
+                keep_audio=not drop_audio,
                 source_probe=source_probe,
-                hevc_bitdepth=args.hevc_bitdepth,
+                hevc_bitdepth=hevc_bitdepth,
                 video_profile=video_profile,
                 cwd=cwd,
                 env=env,
             )
             engine_name = "parad0x_labs_auto"
             final_output = finalize_output(temp_output, build_final_path(source, out_dir, selected_mode, ".mp4"))
-        elif media_kind == "video" and args.video_engine == "fast-hevc" and should_passthrough_video(selected_mode, video_profile):
+        elif media_kind == "video" and video_engine == "fast-hevc" and should_passthrough_video(selected_mode, video_profile):
             temp_output, engine_name, engine_details, move_output = run_video_passthrough_policy(
                 source=source,
                 output_dir=temp_dir,
@@ -2374,12 +2402,12 @@ def main() -> int:
                 output_dir=temp_dir,
                 media_kind=media_kind,
                 mode=selected_mode,
-                image_format=args.image_format,
-                target_mb=args.video_target_mb,
-                keep_audio=not args.drop_audio,
+                image_format=image_format,
+                target_mb=video_target_mb,
+                keep_audio=not drop_audio,
                 source_probe=source_probe,
-                video_engine=args.video_engine,
-                hevc_bitdepth=args.hevc_bitdepth,
+                video_engine=video_engine,
+                hevc_bitdepth=hevc_bitdepth,
                 video_profile=video_profile,
             )
             temp_output, _, _ = run_job(job, cwd=cwd, env=env)
@@ -2405,7 +2433,7 @@ def main() -> int:
             duration_preserved = abs(src_duration - out_duration) <= 0.1
     bit_depth_preserved = infer_bit_depth(source_probe.get("pix_fmt")) == infer_bit_depth(output_probe.get("pix_fmt"))
 
-    print(json.dumps({
+    return {
         "status": "OK",
         "input": str(source),
         "output": str(final_output),
@@ -2423,7 +2451,77 @@ def main() -> int:
         "source_probe": source_probe,
         "output_probe": output_probe,
         "engine_details": engine_details,
-    }, indent=2))
+    }
+
+
+def _error_report(input_value: str, exc: Exception) -> Tuple[Dict[str, object], int]:
+    """Map any failure to a structured, agent-parseable ERR report + exit code."""
+    if isinstance(exc, MediaEngineError):
+        kind, code = exc.error_kind, exc.exit_code
+    elif isinstance(exc, subprocess.TimeoutExpired):
+        kind, code = "timeout", 1
+    elif isinstance(exc, subprocess.CalledProcessError):
+        kind, code = "encode_failed", 1
+    elif isinstance(exc, FileNotFoundError):
+        kind, code = "missing_toolchain", 1
+    elif isinstance(exc, RuntimeError):
+        message = str(exc).lower()
+        if "pillow" in message or "numpy" in message:
+            kind = "dependency_missing"
+        elif "not found" in message and ("ffprobe" in message or "ffmpeg" in message):
+            kind = "missing_toolchain"
+        else:
+            kind = "engine_failed"
+        code = 1
+    else:
+        kind, code = "error", 1
+    return (
+        {"status": "ERR", "error_kind": kind, "error": f"{type(exc).__name__}: {exc}", "input": input_value},
+        code,
+    )
+
+
+def main(argv: Optional[List[str]] = None) -> int:
+    parser = argparse.ArgumentParser(description="PARAD0X MEDIA ENGINE - clean public image/video compression")
+    parser.add_argument("input", help="Input image or video")
+    parser.add_argument("-o", "--out", default="parad0x_media_out", help="Output directory")
+    parser.add_argument("--kind", choices=["auto", "image", "video"], default="auto")
+    parser.add_argument("--mode", choices=PRODUCT_MODE_CHOICES, default="balanced")
+    parser.add_argument("--image-format", choices=["auto", "avif", "webp"], default="auto")
+    parser.add_argument("--video-target-mb", type=float, default=None, help="Optional explicit video target size in MB")
+    parser.add_argument(
+        "--video-engine",
+        choices=["auto", "fast-hevc", "zone"],
+        default="fast-hevc",
+        help="Video engine policy. fast-hevc is the default product lane; auto runs the slower Parad0x Labs candidate fight.",
+    )
+    parser.add_argument(
+        "--hevc-bitdepth",
+        choices=["auto", "8", "10"],
+        default="auto",
+        help="Fast HEVC output bit depth. auto preserves 10-bit only when the source is 10-bit.",
+    )
+    parser.add_argument("--drop-audio", action="store_true", help="Drop video audio for more aggressive size reduction")
+    args = parser.parse_args(argv)
+
+    try:
+        report = optimize(
+            input=args.input,
+            out=args.out,
+            kind=args.kind,
+            mode=args.mode,
+            image_format=args.image_format,
+            video_target_mb=args.video_target_mb,
+            video_engine=args.video_engine,
+            hevc_bitdepth=args.hevc_bitdepth,
+            drop_audio=args.drop_audio,
+        )
+    except Exception as exc:  # CLI boundary: always emit structured JSON, never a raw traceback
+        report, code = _error_report(args.input, exc)
+        print(json.dumps(report))
+        return code
+
+    print(json.dumps(report, indent=2))
     return 0
 
 

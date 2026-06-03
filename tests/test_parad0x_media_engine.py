@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 from types import SimpleNamespace
 
+import pytest
 from PIL import Image
 
 
@@ -888,3 +889,51 @@ def test_run_video_passthrough_policy_uses_audio_squeeze_for_hard_max_savings(tm
     assert details["strategy"] == "quality_guard_audio_squeeze"
     assert details["saved_bytes"] == 100
     assert move_output is True
+
+
+def test_optimize_and_media_engine_error_are_exported() -> None:
+    assert "optimize" in MODULE.__all__
+    assert "main" in MODULE.__all__
+    assert "MediaEngineError" in MODULE.__all__
+    assert callable(MODULE.optimize)
+
+
+def test_optimize_raises_structured_error_for_missing_input(tmp_path: Path) -> None:
+    missing = tmp_path / "nope.mp4"
+    with pytest.raises(MODULE.MediaEngineError) as excinfo:
+        MODULE.optimize(input=str(missing))
+    assert excinfo.value.error_kind == "input_not_found"
+    assert excinfo.value.exit_code == 2
+
+
+def test_main_emits_structured_error_json_for_missing_input(tmp_path: Path, capsys) -> None:
+    import json
+
+    code = MODULE.main([str(tmp_path / "missing.mp4")])
+    assert code == 2
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["status"] == "ERR"
+    assert payload["error_kind"] == "input_not_found"
+    assert "missing.mp4" in payload["input"]
+
+
+def test_main_maps_unexpected_engine_failure_to_structured_json(tmp_path: Path, monkeypatch, capsys) -> None:
+    import json
+
+    source = tmp_path / "photo.jpg"
+    Image.new("RGB", (8, 8), (1, 2, 3)).save(source)
+
+    def boom(*args, **kwargs):
+        raise RuntimeError("ffprobe not found in PATH")
+
+    monkeypatch.setattr(MODULE, "ffprobe_stream", boom)
+    code = MODULE.main([str(source), "--kind", "image", "--mode", "max_quality", "-o", str(tmp_path / "out")])
+    assert code == 1
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["status"] == "ERR"
+    assert payload["error_kind"] == "missing_toolchain"
+
+
+def test_subprocess_timeout_constants_present_and_positive() -> None:
+    assert MODULE.FFPROBE_TIMEOUT_SEC > 0
+    assert MODULE.ENCODE_TIMEOUT_SEC > 0

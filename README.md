@@ -38,6 +38,26 @@ docs:
   release_audit: ./docs/RELEASE_AUDIT.md
 ```
 
+### How this fits the Parad0x stack
+
+Parad0x Labs builds Web0 on Solana — money and agents that settle themselves. **You are here: 🎬 Media — the validation-backed optimizer engine behind [nebula-media](https://github.com/Parad0x-Labs/nebula-media).**
+
+| Layer | Repo | Does |
+|---|---|---|
+| 💸 Payments | [dna-x402](https://github.com/Parad0x-Labs/dna-x402) | x402 rail: quote → pay → verify → receipt → anchor |
+| 🛠️ Build | [dna-x402-builders](https://github.com/Parad0x-Labs/dna-x402-builders) | Hosted kit: turn any API/bot into a paid agent |
+| 🕶️ Privacy | [Dark-Null-Protocol](https://github.com/Parad0x-Labs/Dark-Null-Protocol) | Groth16 privacy settlement, published proofs |
+| 🗜️ Data | [liquefy](https://github.com/Parad0x-Labs/liquefy) | Columnar compression that beats Zstd |
+| 🛡️ Audit | [liquefy-openclaw-integration](https://github.com/Parad0x-Labs/liquefy-openclaw-integration) | Flight recorder: 24 engines + Solana-anchored audit trails |
+| 🎬 Media | [nebula-media](https://github.com/Parad0x-Labs/nebula-media) | Proof-carrying media compression — scene-aware + on-chain receipts |
+| 🧠 Local AI | [nulla-local](https://github.com/Parad0x-Labs/nulla-local) | Local-first agent runtime — your machine, your memory |
+
+This repo is the **validation-backed optimization engine** that sits behind the 🎬 Media layer: quality-gated AVIF/WebP/MP4 with measured SSIM/VMAF, the same engine lineage behind the **Parad0x Compress** apps. Its sibling [nebula-media](https://github.com/Parad0x-Labs/nebula-media) is the proof-carrying pipeline — scene-aware encoding + on-chain receipts — so **media-engine proves quality, nebula-media proves integrity**.
+
+**Why it fits the rest of the stack** — every run returns one machine-readable JSON report (size, ratio, SSIM/VMAF, preservation flags), exactly the shape an agent needs: meter an optimize job and settle it over [dna-x402](https://github.com/Parad0x-Labs/dna-x402), archive the report as a [liquefy](https://github.com/Parad0x-Labs/liquefy)-compressed audit trail, or run it fully local from a [nulla-local](https://github.com/Parad0x-Labs/nulla-local) agent. File-first, public outputs, no decoder lock-in.
+
+**See it live** (a consumer app running on these rails): **[parad0xlabs.com](https://parad0xlabs.com)**
+
 ## Why Teams Deploy It
 
 - **Public outputs only**: no proprietary container tricks, no hostage format, no decoder dependency for normal playback.

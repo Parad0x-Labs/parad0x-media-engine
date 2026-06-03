@@ -169,6 +169,37 @@ The main CLI prints one JSON object per run. It includes:
 
 This makes the engine easy to wrap from agents, local apps, and CI validation jobs.
 
+On failure the CLI still prints **one JSON object — never a raw traceback** — so agents can branch on it:
+
+```json
+{"status": "ERR", "error_kind": "input_not_found", "error": "...", "input": "..."}
+```
+
+`error_kind` is one of `input_not_found`, `missing_toolchain`, `dependency_missing`, `encode_failed`, `timeout`, `engine_failed`, `error`. Exit code is `2` for `input_not_found`, `1` otherwise.
+
+## Python API
+
+The same run is available in-process — no subprocess, no stdout parsing:
+
+```python
+from parad0x_media_engine import optimize, MediaEngineError
+
+try:
+    report = optimize("clip.mp4", mode="balanced", out="./out")
+    print(report["ratio_x"], report["output"])
+except MediaEngineError as exc:
+    print(exc.error_kind)  # e.g. "missing_toolchain"
+```
+
+`optimize()` returns the same dict the CLI prints on success and raises `MediaEngineError` (with `error_kind`) on failure.
+
+## Timeouts
+
+Every `ffmpeg` / `ffprobe` call is bounded, so a hung encode can never block a worker. Override the defaults (seconds) via env:
+
+- `PARADOX_MEDIA_ENGINE_TIMEOUT_SEC` — encodes / metrics (default `1800`)
+- `PARADOX_MEDIA_ENGINE_PROBE_TIMEOUT_SEC` — probes / filter checks (default `120`)
+
 ## Install and Validation Docs
 
 - [docs/INSTALL.md](./docs/INSTALL.md)

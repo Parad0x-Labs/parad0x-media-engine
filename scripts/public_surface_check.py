@@ -20,7 +20,8 @@ TEXT_EXTENSIONS = {
 }
 SKIP_DIRS = {".git", ".venv", "__pycache__", ".pytest_cache", "build", "dist", "reports"}
 FORBIDDEN_PATTERNS = {
-    "internal_codename": re.compile(r"\b(unicorn|nebula|lazarus|dreamscape|techlabs|quantum|gladiator)\b", re.IGNORECASE),
+    # `nebula-media` is a public Parad0x repo; keep flagging the bare codename only.
+    "internal_codename": re.compile(r"\b(unicorn|nebula(?!-media)|lazarus|dreamscape|techlabs|quantum|gladiator)\b", re.IGNORECASE),
     "local_path": re.compile(r"/Users/|Library/Containers|Desktop/media compression|Telegram|sauliuskruopis", re.IGNORECASE),
 }
 
